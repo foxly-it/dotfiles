@@ -44,6 +44,7 @@ sudo run-parts /etc/update-motd.d
 ## Troubleshooting
 **Keine Farben beim Login?**
 - `lolcat` wird mit `-f` auf TTY-lose Ausgaben gezwungen. Prüfe: `command -v /usr/local/bin/lolcat` → Pfad muss existieren.
+
 **Remote Host zeigt `N/A?`**
 - Manche Umgebungen befüllen utmp/Env nicht. Wir versuchen: `SSH_CLIENT` → `who --ips` → `who -m` → `ss` (Peer aus sshd). Prüfe manuell:
 
