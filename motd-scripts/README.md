@@ -21,12 +21,6 @@ cd dotfiles/motd-scripts
 sudo bash install.sh
 ```
 
-## Features
-- Hostname-Banner in Regenbogenfarben
-- Systeminfos (Last, RAM, Swap, freie Root-%)
-- Nur Hardware-NIC-IPs
-- Deutsche Uptime (ab 1 Woche ohne Stunden/Minuten)
-- Farbverlauf nur auf ausgewählten Werten
 
 ### Deaktivieren der Ubuntu-Standardmeldungen
 ```bash
