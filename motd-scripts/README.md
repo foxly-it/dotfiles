@@ -17,7 +17,7 @@ Dieses Projekt liefert ein modernes, dynamisches MOTD:
 
 ```bash
 git clone https://github.com/foxly-it/dotfiles.git
-cd dotfiles/mmotd-scripts
+cd dotfiles/motd-scripts
 sudo bash install.sh
 ```
 
