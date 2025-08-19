@@ -12,6 +12,16 @@ Dieses Projekt liefert ein modernes, dynamisches MOTD:
 > Getestet auf Ubuntu/Debian mit `pam_motd`/`run-parts`.
 
 ---
+## Abhängigkeiten
+```bash
+sudo apt-get update
+sudo apt-get install -y figlet ruby iproute2 procps util-linux
+sudo gem install lolcat --no-document
+# Sicherstellen, dass lolcat systemweit erreichbar ist
+command -v /usr/local/bin/lolcat >/dev/null || sudo ln -s "$(command -v lolcat)" /usr/local/bin/lolcat
+```
+> Erledigt das Installationsscript von allein.
+
 
 ## Installation
 
@@ -20,7 +30,6 @@ git clone https://github.com/foxly-it/dotfiles.git
 cd dotfiles/motd-scripts
 sudo bash install.sh
 ```
-
 
 ### Deaktivieren der Ubuntu-Standardmeldungen
 ```bash
