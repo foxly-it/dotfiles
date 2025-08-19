@@ -32,14 +32,6 @@ sudo chmod -x /etc/update-motd.d/80-* /etc/update-motd.d/90-* /etc/update-motd.d
 sudo run-parts /etc/update-motd.d
 ```
 
-## Anpassen
-**Öffne 10-sysinfo:**
-- Farbe: COLOR="\033[38;5;114m" → angenehmes Grün (256-Farben). Für klassisches Grün: \033[0;32m.
-- Spaltenabstand: GAP=3
-- lolcat-Stil für rechte Werte: LOLCAT_ARGS="-f -p 1.2 -F 0.3"
-- Nur Hardware-IPs: gesteuert über get_hw_ipv4s() (filtert nach /sys/class/net/<iface>/device)
-- Remote-Host: robuste Erkennung über SSH_* → who --ips/who -m → ss/sshd PID
-
 ## Troubleshooting
 **Keine Farben beim Login?**
 `lolcat` wird mit `-f` auf TTY-lose Ausgaben gezwungen. Prüfe:
