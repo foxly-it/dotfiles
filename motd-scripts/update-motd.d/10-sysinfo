@@ -196,60 +196,84 @@ done
 
 echo
 
-# ---- Paket-Updates ----
+# ---- Paket-Updates (tabellarisch ausgerichtet) ----
 if command -v apt-get >/dev/null 2>&1; then
   apt-get update -qq >/dev/null 2>&1
   CODENAME=$(. /etc/os-release 2>/dev/null; echo "${VERSION_CODENAME:-$UBUNTU_CODENAME}")
 
-  if [ "$UPGRADE_MODE" = "dist-upgrade" ]; then
+  # ggf. von außen gesetzter Modus (upgrade/dist-upgrade)
+  if [ "${UPGRADE_MODE:-upgrade}" = "dist-upgrade" ]; then
     sim_out=$(LC_ALL=C apt-get -s dist-upgrade 2>/dev/null)
   else
     sim_out=$(LC_ALL=C apt-get -s upgrade 2>/dev/null)
   fi
 
-  updates=$(printf "%s\n" "$sim_out" | awk '/^Inst /{n++} END{print n+0}')
+  # Paketliste aus der Simulation
+  mapfile -t pkgs < <(printf "%s\n" "$sim_out" | awk '/^Inst /{print $2}')
+  updates=${#pkgs[@]}
 
   if [ "$updates" -gt 0 ]; then
-    mapfile -t pkgs < <(printf "%s\n" "$sim_out" | LC_ALL=C awk '
-      /^Inst /{
-        pkg=$2; old=""; new="";
-        for(i=3;i<=NF;i++){
-          if($i ~ /^\[/){tmp=$i; gsub(/[\[\]]/,"",tmp); old=tmp}
-          if($i ~ /^\(/){tmp=$i; gsub(/[()]/,"",tmp); new=tmp}
-        }
-        printf "%s\t%s\t%s\n", pkg, old, new
-      }')
+    rows_sec=()   # Elemente: pkg<TAB>info<TAB>tag
+    rows_norm=()
+    max_pkg=0; max_info=0; max_tag=0
 
-    security_lines=()
-    normal_lines=()
-    sec_count=0
-
-    for entry in "${pkgs[@]}"; do
-      pkg=$(printf "%s" "$entry" | cut -f1)
-      old=$(printf "%s" "$entry" | cut -f2)
-      new=$(printf "%s" "$entry" | cut -f3)
+    for pkg in "${pkgs[@]}"; do
       policy=$(LC_ALL=C apt-cache policy "$pkg" 2>/dev/null)
+      old=$(printf "%s\n" "$policy" | awk '/Installed:/{print $2}')
+      new=$(printf "%s\n" "$policy" | awk '/Candidate:/{print $2}')
+      [ -z "$old" ] || [ "$old" = "(none)" ] && old="n/a"
+      [ -z "$new" ] && new="n/a"
+
+      info_col="(alt: ${old} → neu: ${new})"
+
+      # Security-/ESM-Erkennung
       if printf "%s\n" "$policy" | grep -qiE "(^|[[:space:]/])${CODENAME}-security([/[:space:]]|$)|(^|[[:space:]])esm([/[:space:]]|$)"; then
-        security_lines+=("  - ${pkg} (alt: ${old} → neu: ${new})  🔒 Sicherheitsupdate")
-        ((sec_count++))
+        tag_col="🔒 Sicherheitsupdate"
+        rows_sec+=("$pkg"$'\t'"$info_col"$'\t'"$tag_col")
       else
-        normal_lines+=("  - ${pkg} (alt: ${old} → neu: ${new})")
+        tag_col="Update"
+        rows_norm+=("$pkg"$'\t'"$info_col"$'\t'"$tag_col")
       fi
+
+      # Maxbreiten bestimmen (über alle Zeilen/Blöcke)
+      (( ${#pkg}      > max_pkg  )) && max_pkg=${#pkg}
+      (( ${#info_col} > max_info )) && max_info=${#info_col}
+      (( ${#tag_col}  > max_tag  )) && max_tag=${#tag_col}
     done
 
-    if [ "$UPGRADE_MODE" = "dist-upgrade" ]; then
-      printf "${COLOR}📦 Es sind %s Paket-Updates verfügbar (Simulation: dist-upgrade), davon %s Sicherheitsupdates:${RESET}\n" "$updates" "$sec_count"
-    else
-      printf "${COLOR}📦 Es sind %s Paket-Updates verfügbar, davon %s Sicherheitsupdates:${RESET}\n" "$updates" "$sec_count"
+    sec_count=${#rows_sec[@]}
+    printf "${COLOR}📦 Es sind %s Paket-Updates verfügbar, davon %s Sicherheitsupdates:${RESET}\n" "$updates" "$sec_count"
+
+    # Separator zwischen Spalten (wenn du gar keine sichtbaren Trenner willst, setze SEP="" oder "  ")
+    SEP="  "
+
+    # Sicherheitsupdates
+    if [ "$sec_count" -gt 0 ]; then
+      printf "\n${COLOR}🔐 Sicherheitsupdates:${RESET}\n"
+      for row in "${rows_sec[@]}"; do
+        IFS=$'\t' read -r pkg info_col tag_col <<<"$row"
+        # „tabellarisch“, aber ohne sichtbare Tabelle: Spalten exakt gepolstert
+        printf "  - %-*s%s%-*s%s%-*s\n" \
+          "$max_pkg"  "$pkg" \
+          "$SEP" \
+          "$max_info" "$info_col" \
+          "$SEP" \
+          "$max_tag"  "$tag_col"
+      done
     fi
 
-    if [ "${#security_lines[@]}" -gt 0 ]; then
-      printf "\n${COLOR}🔐 Sicherheitsupdates:${RESET}\n"
-      for line in "${security_lines[@]}"; do printf "%s\n" "$line"; done
-    fi
-    if [ "${#normal_lines[@]}" -gt 0 ]; then
+    # Weitere Updates
+    if [ "${#rows_norm[@]}" -gt 0 ]; then
       printf "\n${COLOR}🧰 Weitere Updates:${RESET}\n"
-      for line in "${normal_lines[@]}"; do printf "%s\n" "$line"; done
+      for row in "${rows_norm[@]}"; do
+        IFS=$'\t' read -r pkg info_col tag_col <<<"$row"
+        printf "  - %-*s%s%-*s%s%-*s\n" \
+          "$max_pkg"  "$pkg" \
+          "$SEP" \
+          "$max_info" "$info_col" \
+          "$SEP" \
+          "$max_tag"  "$tag_col"
+      done
     fi
   else
     printf "${COLOR}📦 Alle Pakete sind aktuell.${RESET}\n"
