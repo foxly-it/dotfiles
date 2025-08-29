@@ -1,8 +1,6 @@
 #!/bin/sh
 #
-# 00-header - create the header of the MOTD (rainbow via /usr/local/bin/lolcat -f)
-#
-
+# 00-header
 # OS-Infos laden
 [ -r /etc/os-release ] && . /etc/os-release
 OS=$PRETTY_NAME
