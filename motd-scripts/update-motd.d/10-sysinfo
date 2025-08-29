@@ -217,12 +217,54 @@ done
 
 echo
 
-# ---- Updates prüfen (Ubuntu/Debian) ----
 if command -v apt-get >/dev/null 2>&1; then
-  updates=$(apt list --upgradable 2>/dev/null | grep -c upgradable)
+  apt-get update -qq >/dev/null 2>&1
+
+  sim_out=$(LC_ALL=C apt-get -s upgrade 2>/dev/null)
+  updates=$(printf "%s\n" "$sim_out" | awk '/^Inst /{n++} END{print n+0}')
+
   if [ "$updates" -gt 0 ]; then
-    printf "${COLOR}📦 Es sind %s Paket-Updates verfügbar.${RESET}\n" "$updates"
+    printf "${COLOR}📦 Es sind %s Paket-Updates verfügbar:${RESET}\n" "$updates"
+
+    mapfile -t pkgs < <(printf "%s\n" "$sim_out" | LC_ALL=C awk '
+      /^Inst /{
+        pkg=$2; old=""; new="";
+        for(i=3;i<=NF;i++){
+          if($i ~ /^\[/){tmp=$i; gsub(/[\[\]]/,"",tmp); old=tmp}
+          if($i ~ /^\(/){tmp=$i; gsub(/[()]/,"",tmp); new=tmp}
+        }
+        printf "%s\t%s\t%s\n", pkg, old, new
+      }')
+
+    security_lines=()
+    normal_lines=()
+
+    for entry in "${pkgs[@]}"; do
+      pkg=$(printf "%s" "$entry" | cut -f1)
+      old=$(printf "%s" "$entry" | cut -f2)
+      new=$(printf "%s" "$entry" | cut -f3)
+
+      policy=$(LC_ALL=C apt-cache policy "$pkg" 2>/dev/null)
+      repo_line=$(printf "%s\n" "$policy" | grep -E 'security|esm' || true)
+
+      if [ -n "$repo_line" ]; then
+        security_lines+=("  - ${pkg} (alt: ${old} → neu: ${new})  🔒 Sicherheitsupdate")
+      else
+        normal_lines+=("  - ${pkg} (alt: ${old} → neu: ${new})")
+      fi
+    done
+
+    if [ "${#security_lines[@]}" -gt 0 ]; then
+      printf "\n${COLOR}🔐 Sicherheitsupdates:${RESET}\n"
+      for line in "${security_lines[@]}"; do printf "%s\n" "$line"; done
+    fi
+
+    if [ "${#normal_lines[@]}" -gt 0 ]; then
+      printf "\n${COLOR}🧰 Weitere Updates:${RESET}\n"
+      for line in "${normal_lines[@]}"; do printf "%s\n" "$line"; done
+    fi
   else
     printf "${COLOR}📦 Alle Pakete sind aktuell.${RESET}\n"
   fi
 fi
+
