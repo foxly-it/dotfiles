@@ -1,19 +1,23 @@
 #!/bin/bash
 #
-# 10-sysinfo - DE, dynamische Breite, zentrierte Überschrift, angenehmer Grünton
 # - Nur IPs physischer NICs (keine Docker/veth/lo)
-# - Remote-IP robust ermitteln (SSH_Vars -> who --ips/-m -> ss/sshd mit stabilem Parsing)
+# - Remote-IP ermitteln
 # - Ab 1 Woche: Uptime ohne Stunden/Minuten
-# - Nur Werte von "Aktueller Nutzer" & "Remote Host" via lolcat einfärben
 
 # ---- Optik ----
-COLOR="\033[38;5;114m"   # sanftes, gut lesbares Grün (256 Farben)
+COLOR="\033[38;5;114m"
 RESET="\033[0m"
-GAP=3                     # Mindestabstand (Leerzeichen) zwischen Spalten
+GAP=3
 LOLCAT_BIN="/usr/local/bin/lolcat"
-LOLCAT_ARGS="-f -p 1.2 -F 0.3"   # sanfter, gut lesbarer Verlauf
+LOLCAT_ARGS="-f -p 1.2 -F 0.3"
 
-# ---- Helfer: deutsche Uptime (bei ≥1 Woche ohne Stunden/Minuten) ----
+# ---- Optionen ----
+UPGRADE_MODE="upgrade"
+if [ "${1:-}" = "--dist" ]; then
+  UPGRADE_MODE="dist-upgrade"
+fi
+
+# ---- Helfer: deutsche Uptime ----
 de_uptime() {
   local s="$1" w d h m res=""
   w=$(( s/604800 )); s=$(( s%604800 ))
@@ -43,12 +47,12 @@ de_uptime() {
   echo "$res"
 }
 
-# ---- Hardware-IP-Ermittlung (physische NICs, IPv4 global, bevorzugt UP) ----
+# ---- Hardware-IP-Ermittlung ----
 get_hw_ipv4s() {
   local out="" iface ipline ip
   for iface in $(ls -1 /sys/class/net 2>/dev/null); do
     [ "$iface" = "lo" ] && continue
-    [ -e "/sys/class/net/$iface/device" ] || continue   # nur Hardware
+    [ -e "/sys/class/net/$iface/device" ] || continue
     ip link show dev "$iface" 2>/dev/null | grep -q "UP" || continue
     while IFS= read -r ipline; do
       ip=$(echo "$ipline" | awk '{print $4}' | cut -d/ -f1)
@@ -56,7 +60,6 @@ get_hw_ipv4s() {
     done < <(ip -o -4 addr show dev "$iface" scope global 2>/dev/null)
   done
   if [ -z "$out" ]; then
-    # Fallback: auch DOWN-Ifaces berücksichtigen
     for iface in $(ls -1 /sys/class/net 2>/dev/null); do
       [ "$iface" = "lo" ] && continue
       [ -e "/sys/class/net/$iface/device" ] || continue
@@ -69,18 +72,18 @@ get_hw_ipv4s() {
   [ -z "$out" ] && echo "N/A" || echo "${out%, }"
 }
 
+<<<<<<< HEAD
 # ---- Remote-IP/Host ermitteln ----
+=======
+# ---- Remote-IP/Host ----
+>>>>>>> d650781fdc0dfe702770c03052eefb935f3d50b7
 get_remote_host() {
   local rh=""
-
-  # 1) SSH_* Variablen
   if [ -n "$SSH_CLIENT" ]; then
     rh=${SSH_CLIENT%% *}
   elif [ -n "$SSH_CONNECTION" ]; then
     rh=${SSH_CONNECTION%% *}
   fi
-
-  # 2) who --ips anhand des aktuellen TTY (rückwärts das erste IP-ähnliche Feld)
   if [ -z "$rh" ] && command -v who >/dev/null 2>&1; then
     local ttydev
     ttydev=$(tty 2>/dev/null)
@@ -96,13 +99,9 @@ get_remote_host() {
         }')
     fi
   fi
-
-  # 3) who -m (Host in Klammern)
   if [ -z "$rh" ] && command -v who >/dev/null 2>&1; then
     rh=$(who -m 2>/dev/null | awk -F'[()]' '{print $(NF-1)}' | awk 'NF')
   fi
-
-  # 4) ss/sshd: Zeile mit pid=<sshdpid> finden, Feld vor "users:" als Peer nehmen
   if [ -z "$rh" ] && command -v ss >/dev/null 2>&1; then
     local pid=$$ ppid comm sshdpid="" line peer=""
     while [ -n "$pid" ] && [ "$pid" -ne 1 ] && [ -r "/proc/$pid/status" ]; do
@@ -114,18 +113,15 @@ get_remote_host() {
     if [ -n "$sshdpid" ]; then
       line=$(ss -Htnp state established 2>/dev/null | awk -v pid="$sshdpid" '$0 ~ ("pid=" pid) {print; exit}')
       if [ -n "$line" ]; then
-        # Index der Spalte "users:" ermitteln, Peer ist Feld davor
         peer=$(echo "$line" | awk '{
           u=0; for (i=1;i<=NF;i++) if ($i ~ /^users:/) {u=i; break}
           if (u>1) print $(u-1);
         }')
-        # Peer säubern: IPv6 [addr]:port -> addr ; IPv4 addr:port -> addr
         peer=$(echo "$peer" | sed -E 's/^\[?([0-9a-fA-F:]+)\]?(:[0-9]+)?$/\1/')
         [ -n "$peer" ] && rh="$peer"
       fi
     fi
   fi
-
   [ -n "$rh" ] && echo "$rh" || echo "N/A"
 }
 
@@ -138,21 +134,18 @@ free_root_pct=$(df -P / | awk 'NR==2 {printf "%.0f%%", ($4/$2)*100}')
 memory_usage=$(free -m | awk 'NR==2{printf "%.2f%%", $3*100/$2 }')
 swap_usage=$(free -m | awk '/^Swap/ { if ($2==0) print "0.0%"; else printf "%.1f%%", $3*100/$2 }')
 processes=$(ps ax | wc -l)
-
 ips_hw=$(get_hw_ipv4s)
 current_user=$(whoami)
 remote_host=$(get_remote_host)
-
 uptime_secs=$(awk '{print int($1)}' /proc/uptime)
 uptime_de=$(de_uptime "$uptime_secs")
 
-# Dezimal-Komma
 to_de() { echo "$1" | sed 's/\./,/' ; }
 load_pct_de=$(to_de "$load_pct")
 memory_usage_de=$(to_de "$memory_usage")
 swap_usage_de=$(to_de "$swap_usage")
 
-# ---- Tabelle (Zeilen als "L1|V1|R1|V2") ----
+# ---- Tabelle ----
 rows=(
   "IP-Adresse(n):|$ips_hw|Systemlaufzeit:|$uptime_de"
   "Systemlast:|$load_pct_de|Prozesse:|$processes"
@@ -162,7 +155,6 @@ rows=(
   "||Remote Host:|$remote_host"
 )
 
-# ---- Maximalbreiten bestimmen ----
 maxL1=0; maxL2=0; maxR1=0; maxR2=0
 for row in "${rows[@]}"; do
   IFS="|" read -r l1 v1 l2 v2 <<<"$row"
@@ -171,33 +163,25 @@ for row in "${rows[@]}"; do
   (( ${#l2} > maxR1 )) && maxR1=${#l2}
   (( ${#v2} > maxR2 )) && maxR2=${#v2}
 done
-
-# Mindestbreiten + Abstand
 minL1=14; minV1=14; minL2=16; minV2=14
 (( maxL1 < minL1 )) && maxL1=$minL1
 (( maxL2 < minV1 )) && maxL2=$minV1
 (( maxR1 < minL2 )) && maxR1=$minL2
 (( maxR2 < minV2 )) && maxR2=$minV2
-
 gapstr=$(printf "%*s" "$GAP" "")
 table_width=$(( maxL1 + GAP + maxL2 + GAP + maxR1 + GAP + maxR2 ))
 header="Systeminformationen am $datum"
 pad=0; [ $table_width -gt ${#header} ] && pad=$(( (table_width - ${#header}) / 2 ))
 
-# ---- Ausgabe ----
 printf "${COLOR}%*s%s${RESET}\n\n" "$pad" "" "$header"
 
 for row in "${rows[@]}"; do
   IFS="|" read -r l1 v1 l2 v2 <<<"$row"
-
-  # Nur die Werte von "Aktueller Nutzer" & "Remote Host" via lolcat; Labels grün
   if [[ "$l2" == "Aktueller Nutzer:" || "$l2" == "Remote Host:" ]]; then
-    # Linke 3 Spalten grün
     printf "${COLOR}%-*s%s%-*s%s%-*s%s${RESET}" \
       "$maxL1" "$l1" "$gapstr" \
       "$maxL2" "$v1" "$gapstr" \
       "$maxR1" "$l2" "$gapstr"
-    # Rechten Wert auf Spaltenbreite auffüllen
     padded_v2=$(printf "%-*s" "$maxR2" "$v2")
     if [ -x "$LOLCAT_BIN" ] && [ "$v2" != "N/A" ]; then
       printf "%s" "$padded_v2" | "$LOLCAT_BIN" $LOLCAT_ARGS
@@ -206,7 +190,6 @@ for row in "${rows[@]}"; do
       printf "${COLOR}%s${RESET}\n" "$padded_v2"
     fi
   else
-    # Normale Zeilen komplett grün
     printf "${COLOR}%-*s%s%-*s%s%-*s%s%-*s${RESET}\n" \
       "$maxL1" "$l1" "$gapstr" \
       "$maxL2" "$v1" "$gapstr" \
@@ -217,11 +200,85 @@ done
 
 echo
 
-# ---- Updates prüfen (Ubuntu/Debian) ----
+# ---- Paket-Updates (tabellarisch ausgerichtet) ----
 if command -v apt-get >/dev/null 2>&1; then
-  updates=$(apt list --upgradable 2>/dev/null | grep -c upgradable)
+  apt-get update -qq >/dev/null 2>&1
+  CODENAME=$(. /etc/os-release 2>/dev/null; echo "${VERSION_CODENAME:-$UBUNTU_CODENAME}")
+
+  # ggf. von außen gesetzter Modus (upgrade/dist-upgrade)
+  if [ "${UPGRADE_MODE:-upgrade}" = "dist-upgrade" ]; then
+    sim_out=$(LC_ALL=C apt-get -s dist-upgrade 2>/dev/null)
+  else
+    sim_out=$(LC_ALL=C apt-get -s upgrade 2>/dev/null)
+  fi
+
+  # Paketliste aus der Simulation
+  mapfile -t pkgs < <(printf "%s\n" "$sim_out" | awk '/^Inst /{print $2}')
+  updates=${#pkgs[@]}
+
   if [ "$updates" -gt 0 ]; then
-    printf "${COLOR}📦 Es sind %s Paket-Updates verfügbar.${RESET}\n" "$updates"
+    rows_sec=()   # Elemente: pkg<TAB>info<TAB>tag
+    rows_norm=()
+    max_pkg=0; max_info=0; max_tag=0
+
+    for pkg in "${pkgs[@]}"; do
+      policy=$(LC_ALL=C apt-cache policy "$pkg" 2>/dev/null)
+      old=$(printf "%s\n" "$policy" | awk '/Installed:/{print $2}')
+      new=$(printf "%s\n" "$policy" | awk '/Candidate:/{print $2}')
+      [ -z "$old" ] || [ "$old" = "(none)" ] && old="n/a"
+      [ -z "$new" ] && new="n/a"
+
+      info_col="(alt: ${old} → neu: ${new})"
+
+      # Security-/ESM-Erkennung
+      if printf "%s\n" "$policy" | grep -qiE "(^|[[:space:]/])${CODENAME}-security([/[:space:]]|$)|(^|[[:space:]])esm([/[:space:]]|$)"; then
+        tag_col="🔒 Sicherheitsupdate"
+        rows_sec+=("$pkg"$'\t'"$info_col"$'\t'"$tag_col")
+      else
+        tag_col="Update"
+        rows_norm+=("$pkg"$'\t'"$info_col"$'\t'"$tag_col")
+      fi
+
+      # Maxbreiten bestimmen (über alle Zeilen/Blöcke)
+      (( ${#pkg}      > max_pkg  )) && max_pkg=${#pkg}
+      (( ${#info_col} > max_info )) && max_info=${#info_col}
+      (( ${#tag_col}  > max_tag  )) && max_tag=${#tag_col}
+    done
+
+    sec_count=${#rows_sec[@]}
+    printf "${COLOR}📦 Es sind %s Paket-Updates verfügbar, davon %s Sicherheitsupdates:${RESET}\n" "$updates" "$sec_count"
+
+    # Separator zwischen Spalten (wenn du gar keine sichtbaren Trenner willst, setze SEP="" oder "  ")
+    SEP="  "
+
+    # Sicherheitsupdates
+    if [ "$sec_count" -gt 0 ]; then
+      printf "\n${COLOR}🔐 Sicherheitsupdates:${RESET}\n"
+      for row in "${rows_sec[@]}"; do
+        IFS=$'\t' read -r pkg info_col tag_col <<<"$row"
+        # „tabellarisch“, aber ohne sichtbare Tabelle: Spalten exakt gepolstert
+        printf "  - %-*s%s%-*s%s%-*s\n" \
+          "$max_pkg"  "$pkg" \
+          "$SEP" \
+          "$max_info" "$info_col" \
+          "$SEP" \
+          "$max_tag"  "$tag_col"
+      done
+    fi
+
+    # Weitere Updates
+    if [ "${#rows_norm[@]}" -gt 0 ]; then
+      printf "\n${COLOR}🧰 Weitere Updates:${RESET}\n"
+      for row in "${rows_norm[@]}"; do
+        IFS=$'\t' read -r pkg info_col tag_col <<<"$row"
+        printf "  - %-*s%s%-*s%s%-*s\n" \
+          "$max_pkg"  "$pkg" \
+          "$SEP" \
+          "$max_info" "$info_col" \
+          "$SEP" \
+          "$max_tag"  "$tag_col"
+      done
+    fi
   else
     printf "${COLOR}📦 Alle Pakete sind aktuell.${RESET}\n"
   fi
