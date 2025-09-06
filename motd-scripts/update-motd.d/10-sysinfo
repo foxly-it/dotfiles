@@ -72,11 +72,7 @@ get_hw_ipv4s() {
   [ -z "$out" ] && echo "N/A" || echo "${out%, }"
 }
 
-<<<<<<< HEAD
-# ---- Remote-IP/Host ermitteln ----
-=======
 # ---- Remote-IP/Host ----
->>>>>>> d650781fdc0dfe702770c03052eefb935f3d50b7
 get_remote_host() {
   local rh=""
   if [ -n "$SSH_CLIENT" ]; then
