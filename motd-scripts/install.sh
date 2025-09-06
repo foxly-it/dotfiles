@@ -2,10 +2,9 @@
 set -euo pipefail
 
 # ===================== Konfiguration / CLI =====================
-# Optional kannst du eine Repo-URL mitgeben (falls die Skripte NICHT lokal liegen):
 #   sudo bash install.sh https://github.com/foxly-it/dotfiles.git
 REPO_URL="${1:-}"                 # optional: Repo mit update-motd.d/00-header & 10-sysinfo
-BRANCH="${BRANCH:-main}"          # Branch fürs Klonen (nur wenn REPO_URL genutzt wird)
+BRANCH="${BRANCH:-main}"          # Branch fürs Klonen
 DISABLE_UBUNTU="${DISABLE_UBUNTU:-false}"  # true => 80/90/91-* deaktivieren
 WITH_ETC_MOTD="${WITH_ETC_MOTD:-false}"    # true => zusätzlich /etc/motd anzeigen (pam_motd noupdate)
 

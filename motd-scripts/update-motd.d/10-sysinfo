@@ -69,7 +69,7 @@ get_hw_ipv4s() {
   [ -z "$out" ] && echo "N/A" || echo "${out%, }"
 }
 
-# ---- Remote-IP/Host robust ermitteln ----
+# ---- Remote-IP/Host ermitteln ----
 get_remote_host() {
   local rh=""
 
