@@ -72,58 +72,51 @@ get_hw_ipv4s() {
   [ -z "$out" ] && echo "N/A" || echo "${out%, }"
 }
 
-<<<<<<< HEAD
-# ---- Remote-IP/Host ermitteln ----
-=======
 # ---- Remote-IP/Host ----
->>>>>>> d650781fdc0dfe702770c03052eefb935f3d50b7
 get_remote_host() {
   local rh=""
-  if [ -n "$SSH_CLIENT" ]; then
-    rh=${SSH_CLIENT%% *}
-  elif [ -n "$SSH_CONNECTION" ]; then
+
+  # 1) SSH_CONNECTION (stabil bei SSH-Sessions)
+  if [ -n "$SSH_CONNECTION" ]; then
     rh=${SSH_CONNECTION%% *}
+  elif [ -n "$SSH_CLIENT" ]; then
+    rh=${SSH_CLIENT%% *}
   fi
-  if [ -z "$rh" ] && command -v who >/dev/null 2>&1; then
-    local ttydev
-    ttydev=$(tty 2>/dev/null)
-    [ -z "$ttydev" ] && ttydev=$(ps -o tty= -p $$ 2>/dev/null)
-    ttydev=${ttydev#/dev/}
-    if who --help 2>&1 | grep -q -- "--ips"; then
-      rh=$(who --ips 2>/dev/null | awk -v t="$ttydev" '
-        $2==t {
-          for (i=NF; i>=1; i--) {
-            gsub(/[()]/,"",$i)
-            if ($i ~ /^([0-9]{1,3}\.){3}[0-9]{1,3}$/ || $i ~ /^[0-9a-fA-F:]+$/) { print $i; exit }
-          }
-        }')
-    fi
+
+  # 2) systemd-logind (falls vorhanden)
+  if [ -z "$rh" ] && command -v loginctl >/dev/null 2>&1; then
+    local sid
+    sid=$(loginctl show-session "$XDG_SESSION_ID" -p RemoteHost 2>/dev/null | cut -d= -f2)
+    [ -n "$sid" ] && rh="$sid"
   fi
-  if [ -z "$rh" ] && command -v who >/dev/null 2>&1; then
-    rh=$(who -m 2>/dev/null | awk -F'[()]' '{print $(NF-1)}' | awk 'NF')
-  fi
+
+  # 3) ss: Parent-sshd ermitteln und Peer-Adresse auslesen
   if [ -z "$rh" ] && command -v ss >/dev/null 2>&1; then
-    local pid=$$ ppid comm sshdpid="" line peer=""
-    while [ -n "$pid" ] && [ "$pid" -ne 1 ] && [ -r "/proc/$pid/status" ]; do
-      ppid=$(awk '/^PPid:/ {print $2}' /proc/$pid/status 2>/dev/null)
+    local pid=$$
+    local sshdpid=""
+    while [ "$pid" -gt 1 ] && [ -r "/proc/$pid/status" ]; do
+      local comm
       comm=$(cat /proc/$pid/comm 2>/dev/null)
-      if [ "$comm" = "sshd" ]; then sshdpid="$pid"; break; fi
-      pid="$ppid"
-    done
-    if [ -n "$sshdpid" ]; then
-      line=$(ss -Htnp state established 2>/dev/null | awk -v pid="$sshdpid" '$0 ~ ("pid=" pid) {print; exit}')
-      if [ -n "$line" ]; then
-        peer=$(echo "$line" | awk '{
-          u=0; for (i=1;i<=NF;i++) if ($i ~ /^users:/) {u=i; break}
-          if (u>1) print $(u-1);
-        }')
-        peer=$(echo "$peer" | sed -E 's/^\[?([0-9a-fA-F:]+)\]?(:[0-9]+)?$/\1/')
-        [ -n "$peer" ] && rh="$peer"
+      if [ "$comm" = "sshd" ]; then
+        sshdpid="$pid"
+        break
       fi
+      pid=$(awk '/^PPid:/ {print $2}' /proc/$pid/status)
+    done
+
+    if [ -n "$sshdpid" ]; then
+      local peer
+      peer=$(ss -Htnp state established 2>/dev/null \
+        | grep "pid=$sshdpid" \
+        | sed -E 's/.* ([0-9.:a-fA-F]+):[0-9]+ +users:.*/\1/' \
+        | head -n1)
+      [ -n "$peer" ] && rh="$peer"
     fi
   fi
+
   [ -n "$rh" ] && echo "$rh" || echo "N/A"
 }
+
 
 # ---- Daten sammeln ----
 datum=$(date +"%d.%m.%Y %H:%M:%S")
