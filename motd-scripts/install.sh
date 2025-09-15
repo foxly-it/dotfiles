@@ -1,21 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-<<<<<<< HEAD
-# ===================== Konfiguration / CLI =====================
-#   sudo bash install.sh https://github.com/foxly-it/dotfiles.git
-REPO_URL="${1:-}"                 # optional: Repo mit update-motd.d/00-header & 10-sysinfo
-BRANCH="${BRANCH:-main}"          # Branch fürs Klonen
-DISABLE_UBUNTU="${DISABLE_UBUNTU:-false}"  # true => 80/90/91-* deaktivieren
-WITH_ETC_MOTD="${WITH_ETC_MOTD:-false}"    # true => zusätzlich /etc/motd anzeigen (pam_motd noupdate)
-=======
 # ===== Optik & Utils =====
 GREEN="\033[38;5;114m"; BOLD="\033[1m"; RESET="\033[0m"
 info(){ printf "${GREEN}ℹ %s${RESET}\n" "$1"; }
 ok(){ printf "${GREEN}✔ %s${RESET}\n" "$1"; }
 warn(){ printf "\033[33m⚠ %s\033[0m\n" "$1"; }
 err(){ printf "\033[31m✖ %s\033[0m\n" "$1"; }
->>>>>>> d650781fdc0dfe702770c03052eefb935f3d50b7
 
 ask_yn(){ # Enter = Ja
   local prompt="$1"; local def_yes="${2:-y}"; local ans; local hint="[j/N]"; [[ "$def_yes" =~ ^[Yy]$ ]] && hint="[J/n]"
