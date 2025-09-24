@@ -101,7 +101,7 @@ else
   ok "Alle Abhängigkeiten vorhanden."
 fi
 
-# Lolcat optional + Symlink für /usr/local/bin/lolcat (wie dein 00-header erwartet)
+# Lolcat optional + Symlink für /usr/local/bin/lolcat 
 if ! need_cmd lolcat; then
   if ask_yn "Optional: lolcat installieren (schöne Farben)?" y; then
     $SUDO apt-get update -qq
