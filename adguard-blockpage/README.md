@@ -1,3 +1,9 @@
+<!-- Foxly IT MOTD / Sysinfo -->
+![Made by Foxly IT](https://img.shields.io/badge/Made%20by-Foxly%20IT-6f42c1?style=for-the-badge&logo=github&logoColor=white)
+![Shell Script](https://img.shields.io/badge/Bash-Script-2b9348?style=for-the-badge&logo=gnu-bash&logoColor=white)
+![Platform](https://img.shields.io/badge/Platform-Linux-lightgrey?style=for-the-badge&logo=linux&logoColor=white)
+![License](https://img.shields.io/badge/license-Foxly%20Open%20License%20(FOL--1.0)-6f42c1?style=for-the-badge)
+
 # 🦊 Foxly's AdGuard Blockpage
 
 Eine anpassbare Block-Seite für AdGuard Home – modern, humorvoll und mit rotierenden IT-Witzen.

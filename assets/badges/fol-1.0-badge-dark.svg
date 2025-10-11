@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="292" height="28" role="img" aria-label="license: Foxly Open License (FOL-1.0)">
+  <title>license: Foxly Open License (FOL-1.0)</title>
+  <linearGradient id="gd" x2="0" y2="100%">
+    <stop offset="0" stop-color="#000" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <mask id="md"><rect width="292" height="28" rx="4" fill="#fff"/></mask>
+  <g mask="url(#md)">
+    <rect width="62" height="28" fill="#2d2d2d"/>
+    <rect x="62" width="230" height="28" fill="#5a32a3"/>
+    <rect width="292" height="28" fill="url(#gd)"/>
+  </g>
+  <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,Tahoma,Arial" font-size="12">
+    <text x="31" y="18">license</text>
+    <text x="176" y="18">Foxly Open License (FOL-1.0)</text>
+  </g>
+</svg>
