@@ -34,15 +34,6 @@ Zeigt beim SSH-Login eine dynamische, farbige Statusübersicht:
 - 🌈 Farbverlauf mit `lolcat`  
 - 🇩🇪 Ausgabe lokalisiert auf Deutsch  
 
-**Beispielausgabe:**
-
-```
-🦊 foxly.homelab — Debian 13 (x86_64)
-🕒 Laufzeit: 12 Tage | CPU: 3% | RAM: 42%
-🐳 Container aktiv: 17
-🌍 IP: 10.100.0.4 | WAN: 49.22.11.27
-```
-
 > 💡 Standardmäßig wird das Skript unter `/etc/update-motd.d/10-sysinfo` eingebunden.
 
 ---
@@ -92,12 +83,6 @@ sudo chmod +x /etc/update-motd.d/10-sysinfo
 sudo cp -r adguard-blockpage /opt/
 sudo nginx -t && sudo systemctl reload nginx
 ```
-
----
-
-## 📸 Preview
-
-![Preview](adguard-blockpage/web/img/blocked.gif)
 
 ---
 
