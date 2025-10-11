@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seite blockiert</title>
+  <style>
+    :root { --accent:#39ac31; --fg:#111; --bg:#fff; --muted:#555; }
+    @media (prefers-color-scheme: dark) {
+      :root { --fg:#eaeef2; --bg:#0d0f12; --muted:#9aa3af; }
+    }
+    html,body{height:100%;margin:0}
+    body{background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+
+    .container{max-width:960px;margin:0 auto;padding:24px}
+    .text-center{text-align:center}
+    .page_404{padding:40px 0}
+
+    /* Lokales GIF */
+    .four_zero_four_bg{
+      background-image:url(/img/blocked.gif);
+      height:320px;background-repeat:no-repeat;background-position:center;background-size:contain;
+      margin-bottom:10px;
+    }
+    .four_zero_four_bg h1{font-size:clamp(34px,8vw,80px);margin:0}
+
+    .contant_box_404{margin-top:-10px}
+    .h2{font-size:clamp(18px,3.5vw,26px);margin:0 0 8px}
+    p{margin:0 0 12px;color:var(--muted)}
+
+    .link_404{
+      color:#fff!important;background:var(--accent);display:inline-block;
+      padding:10px 20px;border-radius:12px;text-decoration:none;border:1px solid #2a8b27
+    }
+    .btn{display:inline-block;padding:10px 16px;border-radius:12px;text-decoration:none;margin:8px 6px 0;border:1px solid #999;color:var(--fg)}
+    .btn.primary{background:var(--accent);border-color:#2a8b27;color:#fff}
+
+    .meta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:14px 0 0}
+    .chip{border:1px solid #ddd;border-radius:999px;padding:6px 10px;color:var(--muted)}
+    code{background:rgba(128,128,128,.15);padding:.1em .35em;border-radius:6px}
+
+        /* ==== IT-Joke Box ==== */
+    .joke-box {
+      margin-top: 32px;
+      padding: 12px 18px;
+      border: 2px dashed #888;
+      border-radius: 12px;
+      background: #fafafa;
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+      font-family: "Courier New", monospace;
+      font-size: 15px;
+      color: #333;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      transition: background 0.3s ease;
+    }
+    .joke-box:hover {
+      background: #f2f2f2;
+    }
+    .joke {
+      margin: 0;
+      opacity: 1;
+      transition: opacity 0.4s ease;
+    }
+
+  </style>
+</head>
+<body>
+<section class="page_404">
+  <div class="container">
+    <div class="text-center">
+      <div class="four_zero_four_bg">
+        <h1>Blocked!</h1>
+      </div>
+
+      <div class="contant_box_404">
+        <h3 class="h2">Diese Seite wurde blockiert</h3>
+        <p>AdGuard Home hat diese Domain gesperrt. Falls das ein Irrtum ist, melde dich bei <b>Foxly</b>.</p>
+
+        <div class="meta" aria-label="Details">
+          <span class="chip">Domain: <code id="host">–</code></span>
+          <span class="chip">Zeit: <code id="ts">–</code></span>
+          <span class="chip">Client-IP: <code id="cip">n/v</code></span>
+        </div>
+
+        <!-- Witz-Sektion -->
+        <div id="joke-box" class="joke-box">
+          <p id="joke" class="joke"></p>
+        </div>
+
+
+
+        <div>
+          <a class="link_404" href="https://blocked.homelab.foxly.de">Mehr Infos</a>
+          <a class="btn" href="https://adguard.homelab.foxly.de" rel="nofollow">AdGuard Dashboard</a>
+          <a class="btn" href="#" onclick="location.reload()">Erneut prüfen</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('host').textContent = location.host || location.hostname || 'unbekannt';
+  $('ts').textContent = new Date().toLocaleString();
+  fetch('/clientip.txt', {cache:'no-store'})
+    .then(r => r.ok ? r.text() : Promise.reject())
+    .then(t => $('cip').textContent = (t||'').trim() || 'n/v')
+    .catch(()=>{});
+
+  // --- IT-Jokes (20 Stück) ---
+  const jokes = [
+    "Es gibt 10 Arten von Menschen: die, die Binär verstehen, und die anderen.",
+    "Mein Code läuft nicht. – Warum? – Keine Ahnung, gestern hat er noch gerannt.",
+    "„Bei mir geht’s!“ – Berühmte letzte Worte jedes Entwicklers.",
+    "Hardware ist das, worauf man treten kann, wenn die Software nervt.",
+    "Ein SQL kam in eine Bar, fragte nach zwei Tabellen und sagte: „Join me.“",
+    "„It works on my machine.“ – „Dann nimm deine Maschine mit in Produktion.“",
+    "Ein Programmierer stirbt. Auf dem Grabstein steht: R.I.P.; return 0;",
+    "Wie viele Programmierer braucht man, um eine Glühbirne zu wechseln? – Keine, ist ein Hardwareproblem.",
+    "Nie mit 0 teilen. Außer durch Freizeit.",
+    "„Nur noch schnell in Produktion hotfixen…“ – berühmte Horror-Story.",
+    "Ich habe keine Bugs – das sind unvorhergesehene Features.",
+    "Cache invalidation ist schwer. Das und die richtigen Namen.",
+    "„Kannst du das schnell machen?“ – „Ja. Aber dann ist es auch schnell kaputt.“",
+    "Regex ist wie Zauberei. Macht Eindruck – bis man selbst dran ist.",
+    "„Warum ist es langsam?“ – „Hast du’s mal neu gestartet?“",
+    "IPv6? Klar, das kommt gleich nach der Doku.",
+    "Cloud ist nur der Computer eines anderen. Mit deiner Kreditkarte.",
+    "Backup ist gut. Restore ist besser.",
+    "„Wir refactoren später.“ – Niemand, jemals, ehrlich gemeint.",
+    "Kein Internet? Dann ist das WLAN-Kabel wohl rausgerutscht."
+  ];
+
+  const el = document.getElementById('joke');
+  const seen = new Set();
+  function nextJoke() {
+    if (seen.size === jokes.length) seen.clear();
+    let idx;
+    do { idx = Math.floor(Math.random() * jokes.length); } while (seen.has(idx));
+    seen.add(idx);
+    el.style.opacity = 0;
+    setTimeout(() => { el.textContent = jokes[idx]; el.style.opacity = 1; }, 200);
+  }
+
+  // Start: sofort + alle 20 Sekunden
+  nextJoke();
+  setInterval(nextJoke, 20000);
+</script>
+
+
+</body>
+</html>
