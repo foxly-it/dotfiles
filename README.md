@@ -24,7 +24,7 @@ Hier findest du unter anderem meine farbigen **MOTD-Scripts** sowie meine vollst
 
 ## 🧠 MOTD / Sysinfo Scripts
 
-**Ort:** [`motd/`](./motd)
+**Ort:** [`motd/`](./motd-scripts)
 
 Zeigt beim SSH-Login eine dynamische, farbige Statusübersicht:
 
