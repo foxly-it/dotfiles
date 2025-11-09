@@ -1,70 +1,123 @@
 <!doctype html>
-<html lang="de">
+<html lang="de" data-theme="auto">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
   <title>Seite blockiert</title>
   <style>
-    :root { --accent:#39ac31; --fg:#111; --bg:#fff; --muted:#555; }
-    @media (prefers-color-scheme: dark) {
-      :root { --fg:#eaeef2; --bg:#0d0f12; --muted:#9aa3af; }
+    /* === Lightmode-Basisfarben ============================================ */
+    :root{
+      --accent:#39ac31; --accent-ink:#fff;
+      --fg:#111217; --bg:#fff; --muted:#5f6875;
+      --border:#d6d9df; --chip-bg:#f4f6f8; --chip-border:#e2e5ea;
+      --code-bg:rgba(16,24,40,.06); --btn-border:#c9cdd5;
+      --box-bg:#fafafa; --box-border:#b8bdc6;
+      --focus:#2563eb33; --shadow:0 2px 6px rgba(0,0,0,.08);
     }
+
+    /* === System-Darkmode ================================================== */
+    @media (prefers-color-scheme: dark){
+      :root{
+        --accent:#44c03a; --accent-ink:#071208;
+        --fg:#e8edf3; --bg:#0b0e12; --muted:#a2adbb;
+        --border:#2a3038; --chip-bg:#12161c; --chip-border:#2a3038;
+        --code-bg:rgba(255,255,255,.06); --btn-border:#3a414b;
+        --box-bg:#11151b; --box-border:#323843;
+        --focus:#60a5fa33; --shadow:0 2px 8px rgba(0,0,0,.35);
+      }
+    }
+
+    /* === Manuelle Overrides (Safari-safe) ================================= */
+    :root[data-theme="light"]{ color-scheme:light; }
+    :root[data-theme="dark"]{
+      color-scheme:dark;
+      --accent:#44c03a; --accent-ink:#071208;
+      --fg:#e8edf3; --bg:#0b0e12; --muted:#a2adbb;
+      --border:#2a3038; --chip-bg:#12161c; --chip-border:#2a3038;
+      --code-bg:rgba(255,255,255,.06); --btn-border:#3a414b;
+      --box-bg:#11151b; --box-border:#323843;
+      --focus:#60a5fa33; --shadow:0 2px 8px rgba(0,0,0,.35);
+    }
+
     html,body{height:100%;margin:0}
-    body{background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    body{
+      background:var(--bg);color:var(--fg);
+      font:16px/1.5 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      transition:background .25s ease,color .25s ease;
+    }
 
     .container{max-width:960px;margin:0 auto;padding:24px}
     .text-center{text-align:center}
     .page_404{padding:40px 0}
 
-    /* Lokales GIF */
+    /* === Blocked Animation ================================================ */
     .four_zero_four_bg{
-      background-image:url(/img/blocked.gif);
+      background-image:url(/img/blocked-light.webp);
       height:320px;background-repeat:no-repeat;background-position:center;background-size:contain;
-      margin-bottom:10px;
+      margin-bottom:10px;position:relative;
     }
-    .four_zero_four_bg h1{font-size:clamp(34px,8vw,80px);margin:0}
+    /* Auto Dark */
+    @media (prefers-color-scheme: dark){
+      .four_zero_four_bg{background-image:url(/img/blocked-dark.webp);}
+    }
+    /* Manueller Toggle */
+    :root[data-theme="dark"] .four_zero_four_bg{background-image:url(/img/blocked-dark.webp);}
+    :root[data-theme="light"] .four_zero_four_bg{background-image:url(/img/blocked-light.webp);}
+
+    .four_zero_four_bg h1{font-size:clamp(34px,8vw,80px);margin:0;text-shadow:var(--shadow)}
 
     .contant_box_404{margin-top:-10px}
     .h2{font-size:clamp(18px,3.5vw,26px);margin:0 0 8px}
     p{margin:0 0 12px;color:var(--muted)}
 
-    .link_404{
-      color:#fff!important;background:var(--accent);display:inline-block;
-      padding:10px 20px;border-radius:12px;text-decoration:none;border:1px solid #2a8b27
+    /* === Buttons ========================================================== */
+    .btn,.link_404{
+      display:inline-block;padding:10px 16px;border-radius:12px;text-decoration:none;
+      margin:8px 6px 0;border:1px solid var(--btn-border);color:var(--fg);background:transparent;
+      transition:transform .05s ease,background .2s ease,border-color .2s ease;
     }
-    .btn{display:inline-block;padding:10px 16px;border-radius:12px;text-decoration:none;margin:8px 6px 0;border:1px solid #999;color:var(--fg)}
-    .btn.primary{background:var(--accent);border-color:#2a8b27;color:#fff}
+    .btn:active,.link_404:active{transform:translateY(1px)}
+    .btn:hover{background:var(--chip-bg)}
+    .btn.primary,.link_404{background:var(--accent);color:var(--accent-ink);border-color:#246d21}
+    .btn.primary:hover,.link_404:hover{filter:brightness(.96)}
+    .btn:focus-visible,.link_404:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 
+    /* === Chips + Code ===================================================== */
     .meta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:14px 0 0}
-    .chip{border:1px solid #ddd;border-radius:999px;padding:6px 10px;color:var(--muted)}
-    code{background:rgba(128,128,128,.15);padding:.1em .35em;border-radius:6px}
+    .chip{background:var(--chip-bg);border:1px solid var(--chip-border);
+      border-radius:999px;padding:6px 10px;color:var(--muted)}
+    code{background:var(--code-bg);padding:.1em .35em;border-radius:6px}
 
-        /* ==== IT-Joke Box ==== */
-    .joke-box {
-      margin-top: 32px;
-      padding: 12px 18px;
-      border: 2px dashed #888;
-      border-radius: 12px;
-      background: #fafafa;
-      max-width: 580px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: center;
-      font-family: "Courier New", monospace;
-      font-size: 15px;
-      color: #333;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      transition: background 0.3s ease;
+    /* === IT-Joke-Box ====================================================== */
+    .joke-box{
+      margin-top:32px;padding:12px 18px;border:2px dashed var(--box-border);
+      border-radius:12px;background:var(--box-bg);max-width:580px;margin-left:auto;margin-right:auto;
+      text-align:center;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Courier New",monospace;
+      font-size:15px;color:var(--fg);box-shadow:var(--shadow);
+      transition:background .25s ease,border-color .25s ease;
     }
-    .joke-box:hover {
-      background: #f2f2f2;
+    .joke-box:hover{opacity:.98}
+    .joke{margin:0;opacity:1;transition:opacity .4s ease}
+
+    /* === Theme Toggle ===================================================== */
+    .theme-toggle{
+      position:absolute;right:18px;top:18px;display:flex;gap:6px;align-items:center;
+      font-size:13px;color:var(--muted);user-select:none;
     }
-    .joke {
-      margin: 0;
-      opacity: 1;
-      transition: opacity 0.4s ease;
+    .theme-toggle button{
+      border:1px solid var(--btn-border);background:var(--chip-bg);color:var(--fg);
+      border-radius:999px;padding:6px 10px;cursor:pointer;
+    }
+    .theme-toggle button[aria-pressed="true"]{
+      background:var(--accent);color:var(--accent-ink);border-color:#246d21;
     }
 
+    @media (max-width:480px){
+      .container{padding:16px}
+      .theme-toggle{right:12px;top:12px}
+    }
   </style>
 </head>
 <body>
@@ -73,6 +126,13 @@
     <div class="text-center">
       <div class="four_zero_four_bg">
         <h1>Blocked!</h1>
+
+        <!-- Theme Toggle -->
+        <div class="theme-toggle" role="group" aria-label="Theme wählen">
+          <button id="tAuto"  type="button" aria-pressed="true"  title="System">Auto</button>
+          <button id="tLight" type="button" aria-pressed="false" title="Hell">Hell</button>
+          <button id="tDark"  type="button" aria-pressed="false" title="Dunkel">Dunkel</button>
+        </div>
       </div>
 
       <div class="contant_box_404">
@@ -86,12 +146,10 @@
         </div>
 
         <!-- Witz-Sektion -->
-        <div id="joke-box" class="joke-box">
+        <div id="joke-box" class="joke-box" aria-live="polite">
           <p id="joke" class="joke"></p>
         </div>
-
-
-
+<br>
         <div>
           <a class="link_404" href="https://blocked.homelab.foxly.de">Mehr Infos</a>
           <a class="btn" href="https://adguard.homelab.foxly.de" rel="nofollow">AdGuard Dashboard</a>
@@ -103,6 +161,7 @@
 </section>
 
 <script>
+  // Meta
   const $ = id => document.getElementById(id);
   $('host').textContent = location.host || location.hostname || 'unbekannt';
   $('ts').textContent = new Date().toLocaleString();
@@ -111,7 +170,7 @@
     .then(t => $('cip').textContent = (t||'').trim() || 'n/v')
     .catch(()=>{});
 
-  // --- IT-Jokes (20 Stück) ---
+  // Jokes
   const jokes = [
     "Es gibt 10 Arten von Menschen: die, die Binär verstehen, und die anderen.",
     "Mein Code läuft nicht. – Warum? – Keine Ahnung, gestern hat er noch gerannt.",
@@ -134,23 +193,29 @@
     "„Wir refactoren später.“ – Niemand, jemals, ehrlich gemeint.",
     "Kein Internet? Dann ist das WLAN-Kabel wohl rausgerutscht."
   ];
-
-  const el = document.getElementById('joke');
-  const seen = new Set();
-  function nextJoke() {
+  const el = $('joke'); const seen = new Set();
+  function nextJoke(){
     if (seen.size === jokes.length) seen.clear();
-    let idx;
-    do { idx = Math.floor(Math.random() * jokes.length); } while (seen.has(idx));
-    seen.add(idx);
-    el.style.opacity = 0;
-    setTimeout(() => { el.textContent = jokes[idx]; el.style.opacity = 1; }, 200);
+    let i; do { i = Math.floor(Math.random()*jokes.length); } while (seen.has(i));
+    seen.add(i); el.style.opacity=0; setTimeout(()=>{ el.textContent=jokes[i]; el.style.opacity=1; },200);
   }
+  nextJoke(); setInterval(nextJoke, 20000);
 
-  // Start: sofort + alle 20 Sekunden
-  nextJoke();
-  setInterval(nextJoke, 20000);
+  // Theme
+  const root=document.documentElement;
+  const buttons={auto:$('tAuto'),light:$('tLight'),dark:$('tDark')};
+  function applyTheme(mode){
+    root.setAttribute('data-theme',mode);
+    for(const k in buttons){buttons[k].setAttribute('aria-pressed',String(k===mode));}
+    try{localStorage.setItem('blockpage-theme',mode);}catch(e){}
+  }
+  (function initTheme(){
+    let saved=null;try{saved=localStorage.getItem('blockpage-theme');}catch(e){}
+    applyTheme((saved==='light'||saved==='dark')?saved:'auto');
+  })();
+  buttons.auto.addEventListener('click',()=>applyTheme('auto'));
+  buttons.light.addEventListener('click',()=>applyTheme('light'));
+  buttons.dark.addEventListener('click',()=>applyTheme('dark'));
 </script>
-
-
 </body>
 </html>
