@@ -1,0 +1,44 @@
+services:
+  zoraxy:
+    image: zoraxydocker/zoraxy:v3.3.0
+    container_name: zoraxy
+    restart: unless-stopped
+
+    ports:
+      - "${ZORAXY_HTTP_PORT}:80"
+      - "${ZORAXY_HTTPS_PORT}:443"
+      - "${ZORAXY_UI_PORT}:8000"
+
+    volumes:
+      - /home/zoraxyproxy/config:/opt/zoraxy/config
+      - /home/zoraxyproxy/plugins:/opt/zoraxy/plugin
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    environment:
+      TZ: "${TZ}"
+      PORT: "8000"
+      NOAUTH: "${ZORAXY_NOAUTH}"
+      DOCKER: "${ZORAXY_DOCKER}"
+      CFGUPGRADE: "${ZORAXY_CFGUPGRADE}"
+      DB: "${ZORAXY_DB}"
+      PLUGIN: "${ZORAXY_PLUGIN_PATH}"
+
+      FASTGEOIP: "${ZORAXY_FASTGEOIP}"
+      MDNS: "${ZORAXY_MDNS}"
+      WEBFM: "${ZORAXY_WEBFM}"
+      ZEROTIER: "${ZORAXY_ZEROTIER}"
+
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:${ZORAXY_INTERNAL_PORT}/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
+    name: web
