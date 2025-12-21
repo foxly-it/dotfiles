@@ -3,8 +3,6 @@
 [🇩🇪 Deutsch](#-docker-templates) | [🇬🇧 English](#-docker-templates-english)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/<dein-user>/<dein-repo>?style=for-the-badge)](https://github.com/<dein-user>/<dein-repo>/stargazers)
-[![Issues](https://img.shields.io/github/issues/<dein-user>/<dein-repo>?style=for-the-badge)](https://github.com/<dein-user>/<dein-repo>/issues)
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue?style=for-the-badge)](#)
 [![Made by Foxly](https://img.shields.io/badge/Made%20by-Foxly%20IT-orange?style=for-the-badge)](https://foxly.de)
 

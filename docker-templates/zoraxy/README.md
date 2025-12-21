@@ -3,8 +3,6 @@
 [🇩🇪 Deutsch](#-zoraxy-templates) | [🇬🇧 English](#-zoraxy-templates-english)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-informational?style=for-the-badge)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/<dein-user>/<zoraxy-repo>?style=for-the-badge)](https://github.com/<dein-user>/<zoraxy-repo>/stargazers)
-[![Issues](https://img.shields.io/github/issues/<dein-user>/<zoraxy-repo>?style=for-the-badge)](https://github.com/<dein-user>/<zoraxy-repo>/issues)
 [![Reverse Proxy](https://img.shields.io/badge/Reverse%20Proxy-Zoraxy-blue?style=for-the-badge)](#)
 [![Made by Foxly](https://img.shields.io/badge/Made%20by-Foxly%20IT-orange?style=for-the-badge)](https://foxly.de)
 
