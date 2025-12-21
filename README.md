@@ -1,112 +1,181 @@
 # 🦊 Foxly IT — Dotfiles & Server Goodies
 
+[🇩🇪 Deutsch](#-deutsch) | [🇬🇧 English](#-english)
+
 ![GitHub Repo size](https://img.shields.io/github/repo-size/foxly-it/dotfiles?style=for-the-badge&color=6f42c1)
 ![GitHub last commit](https://img.shields.io/github/last-commit/foxly-it/dotfiles?style=for-the-badge&color=2b9348)
 ![GitHub stars](https://img.shields.io/github/stars/foxly-it/dotfiles?style=for-the-badge&color=ffaa00)
 ![License](https://img.shields.io/badge/license-Foxly%20Open%20License-blueviolet?style=for-the-badge)
 ![Made with 💜](https://img.shields.io/badge/made%20with-%F0%9F%92%9C-purple?style=for-the-badge)
 
-Dieses Repository enthält eine Sammlung meiner persönlichen Server-Konfigurationen, Skripte und Frontends,  
-die in meinem **Homelab / Foxly IT Setup** verwendet werden.
+---
 
-Hier findest du unter anderem meine farbigen **MOTD-Scripts** sowie meine vollständig designte **AdGuard Home Blockpage**.
+## 🇩🇪 Deutsch
+
+Dieses Repository ist eine kuratierte Sammlung meiner persönlichen **Dotfiles, Server-Konfigurationen, Shell-Skripte und Frontends**,  
+die produktiv in meinem **Foxly-IT-Homelab** und auf mehreren vServern eingesetzt werden.
+
+Der Fokus liegt auf:
+
+- sauber strukturierter Infrastruktur
+- reproduzierbaren Docker- und Proxy-Setups
+- verständlicher, wartbarer Konfiguration
+- technischer Klarheit statt „Magie“
+- konsistentem Design bis in CLI und Weboberflächen
+
+Dieses Repository dient gleichzeitig als **Arbeitsgrundlage**, **Referenz** und **Dokumentation**.
 
 ---
 
 ## 📂 Inhalt
 
 | Bereich | Beschreibung |
-|----------|---------------|
-| 🧠 **motd/** | Farbiges **Systeminfo- und Begrüßungsskript**, das beim Login automatisch ausgeführt wird. Zeigt Hostname, IPs, Laufzeit, Docker-Container, Systemlast u.v.m. |
-| 🛡️ **adguard-blockpage/** | Vollständige, responsive **Blockseite für AdGuard Home**, die bei geblockten Domains angezeigt wird. Inklusive rotierender IT-Witze, Docker/Nginx-Integration und Beispiel-Preview. |
+|--------|--------------|
+| 🧠 **motd/** | Farbiges Systeminfo- & Login-Skript (MOTD) für SSH-Logins. Zeigt Hostname, IPs, Uptime, Docker-Status, Systemlast u. v. m. |
+| 🛡️ **adguard-blockpage/** | Vollständig designte, responsive Blockseite für AdGuard Home mit IT-Witz-Rotation, Docker- & Nginx-Integration. |
+| 🐳 **docker-templates/** | Wiederverwendbare Docker- & Docker-Compose-Templates für Homelab- und Server-Stacks. |
+| 🔀 **docker-templates/zoraxy/** | Zoraxy-Templates mit Fokus auf Reverse Proxy, Header-Handling, TLS und sichere Exposition von Diensten. |
 
 ---
 
 ## 🧠 MOTD / Sysinfo Scripts
 
-**Ort:** [`motd/`](./motd-scripts)
+**Pfad:** `motd/`
 
-Zeigt beim SSH-Login eine dynamische, farbige Statusübersicht:
+Beim SSH-Login wird eine dynamische Statusübersicht angezeigt, u. a.:
 
-- ✅ Hostname, Kernel, Uptime, Load  
-- 🧰 Containerstatus (Docker)  
-- 🧮 Speicher- und Plattennutzung  
-- 🌈 Farbverlauf mit `lolcat`  
-- 🇩🇪 Ausgabe lokalisiert auf Deutsch  
+- Hostname, Kernel, Uptime, Load
+- Docker-Container-Status
+- RAM- und Plattennutzung
+- optionale Farbverläufe (`lolcat`)
+- deutsch lokalisierte Ausgabe
 
-> 💡 Standardmäßig wird das Skript unter `/etc/update-motd.d/10-sysinfo` eingebunden.
+Standard-Einbindung über `/etc/update-motd.d/10-sysinfo`.
 
 ---
 
 ## 🛡️ AdGuard Home — Custom Blockpage
 
-**Ort:** [`adguard-blockpage/`](./adguard-blockpage)
+**Pfad:** `adguard-blockpage/`
 
-Zeigt ansprechend gestaltete **Hinweisseite** für geblockte Domains.  
-Wird über AdGuard Home → *DNS Settings → Blocked services → Custom IP* eingebunden.
+Diese Blockpage ersetzt die Standard-Hinweisseite von AdGuard Home durch eine moderne, markenkonforme HTML-Seite  
+für geblockte Domains.
 
-### ✨ Features
+### Features
 
-- 🦊 **Eigene Blockseite mit Foxly-Branding**
-- 🎨 HTML5 + CSS3 mit modernem Layout
-- 💬 **Rotierende IT-Witze** (alle 20 Sekunden, zufällig)
-- 🧱 Docker- & Nginx-Integration
-- 🔒 HTTP-bereit (optional via Zoraxy über HTTPS)
+- Foxly-Branding
+- modernes HTML5- & CSS-Layout
+- rotierende IT-Witze
+- Docker- & Nginx-fähig
+- optionaler HTTPS-Betrieb über Zoraxy
 
-### 🧩 Beispiel-Integration (Nginx)
+### Beispiel (Nginx)
 
-```nginx
-server {
-  listen 10.100.0.4:80 default_server;
-  server_name _;
-  root /opt/adguard-blockpage;
-  index index.html;
-}
-```
-
-Optional über **Zoraxy** als Reverse-Proxy mit Zertifikat erreichbar  
-→ z. B. `https://blocked.homelab.foxly.de`
+    server {
+      listen 10.100.0.4:80 default_server;
+      server_name _;
+      root /opt/adguard-blockpage;
+      index index.html;
+    }
 
 ---
 
-## 🧰 Installation (Beispiel)
+## 🧰 Installation (Kurzbeispiel)
 
-```bash
-git clone https://github.com/foxly-it/dotfiles.git /opt/dotfiles
-cd /opt/dotfiles
+    git clone https://github.com/foxly-it/dotfiles.git /opt/dotfiles
+    cd /opt/dotfiles
 
-# MOTD aktivieren
-sudo cp motd/10-sysinfo /etc/update-motd.d/
-sudo chmod +x /etc/update-motd.d/10-sysinfo
+    sudo cp motd/10-sysinfo /etc/update-motd.d/
+    sudo chmod +x /etc/update-motd.d/10-sysinfo
 
-# AdGuard Blockpage bereitstellen
-sudo cp -r adguard-blockpage /opt/
-sudo nginx -t && sudo systemctl reload nginx
-```
+    sudo cp -r adguard-blockpage /opt/
+    sudo nginx -t && sudo systemctl reload nginx
 
 ---
 
 ## ⚙️ Tools & Umgebung
 
-- Debian 13 / Bookworm  
-- Zoraxy (Reverse Proxy)  
-- AdGuard Home + Unbound  
-- Docker Compose + Nginx  
-- lolcat / figlet für CLI-Ausgabe
+- Debian 13 (Bookworm)
+- Docker & Docker Compose
+- Zoraxy (Reverse Proxy)
+- AdGuard Home + Unbound
+- Nginx
+- lolcat / figlet
 
 ---
 
-## 📜 Lizenz
+## 🇬🇧 English
 
-© 2025 Foxly IT — Veröffentlicht unter der **Foxly Open License**  
-Diese Software darf frei genutzt, verändert und geteilt werden,  
-solange der ursprüngliche Autor genannt und keine kommerzielle Nutzung erfolgt.
+This repository is a curated collection of my personal **dotfiles, server configurations, shell scripts, and frontends**,  
+used productively in my **Foxly IT homelab** and on multiple VPS systems.
 
-Siehe [LICENSE](./LICENSE) für weitere Details.
+The focus is on:
+
+- clean and structured infrastructure
+- reproducible Docker and proxy setups
+- maintainable and transparent configuration
+- technical clarity instead of hidden magic
+- consistent design from CLI to web interfaces
+
+This repository serves as a **working base**, **reference**, and **documentation**.
 
 ---
 
-## 🦊 Über Foxly IT
+## 📂 Contents
 
-> „Homelab, Automation & Style — made with 💜 by Mark Schenk (Foxly).“  
-> Mehr unter [https://foxly.de](https://foxly.de)
+| Area | Description |
+|------|-------------|
+| 🧠 **motd/** | Colored system info & login script (MOTD) for SSH logins. Displays hostname, IPs, uptime, Docker status, system load, and more. |
+| 🛡️ **adguard-blockpage/** | Fully designed, responsive custom block page for AdGuard Home with IT joke rotation and Docker/Nginx support. |
+| 🐳 **docker-templates/** | Reusable Docker and Docker Compose templates for homelab and server stacks. |
+| 🔀 **docker-templates/zoraxy/** | Zoraxy reverse proxy templates focusing on header handling, TLS, and secure service exposure. |
+
+---
+
+## 🧠 MOTD / Sysinfo Scripts
+
+**Path:** `motd/`
+
+Displays a dynamic system overview on SSH login, including:
+
+- hostname, kernel, uptime, load
+- Docker container status
+- memory and disk usage
+- optional color gradients via `lolcat`
+
+---
+
+## 🛡️ AdGuard Home — Custom Blockpage
+
+**Path:** `adguard-blockpage/`
+
+Replaces the default AdGuard Home block page with a modern, branded HTML page  
+shown when domains are blocked.
+
+---
+
+## ⚙️ Environment
+
+- Debian Linux
+- Docker & Docker Compose
+- Zoraxy Reverse Proxy
+- AdGuard Home with Unbound
+- Nginx
+
+---
+
+## 📜 License
+
+© 2025 Foxly IT — released under the **Foxly Open License**.
+
+Free to use, modify and share,  
+as long as attribution is given and no commercial use is made.
+
+See [LICENSE](./LICENSE) for details.
+
+---
+
+## 🦊 About Foxly IT
+
+> “Homelab, automation & style — made with 💜 by Mark Schenk (Foxly).”  
+> https://foxly.de
