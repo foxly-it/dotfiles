@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Warum wurde diese Seite blockiert?</title>
+
+  <!-- FONT AWESOME -->
+  <link rel="stylesheet" href="/assets/fontawesome/css/fontawesome.min.css">
+  <link rel="stylesheet" href="/assets/fontawesome/css/solid.min.css">
+
+  <style>
+    /* ====================================================================== */
+    /*  LIGHT MODE (Default)                                                   */
+    /* ====================================================================== */
+    :root {
+      --accent:#39ac31; 
+      --accent-ink:#fff;
+
+      --fg:#111217;
+      --bg:#ffffff;
+      --muted:#5f6875;
+
+      --chip-bg:#f4f6f8;
+      --chip-border:#e2e5ea;
+
+      --btn-bg:#f4f4f6;
+      --btn-border:#d5d8dd;
+      --btn-fg:#1c1f24;
+
+      --box-bg:#fafafa;
+      --box-border:#cfd3d9;
+
+      --radius:16px;
+      --shadow:0 2px 6px rgba(0,0,0,.08);
+      --shadow-deep:0 2px 12px rgba(0,0,0,.12);
+    }
+
+    /* ====================================================================== */
+    /*  AUTO DARK MODE (System)                                                */
+    /* ====================================================================== */
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) {
+        --accent:#44c03a;
+        --accent-ink:#071208;
+
+        --fg:#e8edf3;
+        --bg:#0b0e12;
+        --muted:#a5b1c0;
+
+        --chip-bg:#12161c;
+        --chip-border:#2a3038;
+
+        --btn-bg:#191d23;
+        --btn-border:#2e333b;
+        --btn-fg:#e9eef5;
+
+        --box-bg:#11151b;
+        --box-border:#2f353f;
+
+        --shadow:0 2px 6px rgba(0,0,0,.45);
+        --shadow-deep:0 2px 15px rgba(0,0,0,.55);
+      }
+    }
+
+    /* ====================================================================== */
+    /*  FORCED DARK MODE                                                       */
+    /* ====================================================================== */
+    :root[data-theme="dark"] {
+      --accent:#44c03a;
+      --accent-ink:#071208;
+
+      --fg:#e8edf3;
+      --bg:#0b0e12;
+      --muted:#a5b1c0;
+
+      --chip-bg:#12161c;
+      --chip-border:#2a3038;
+
+      --btn-bg:#191d23;
+      --btn-border:#2e333b;
+      --btn-fg:#e9eef5;
+
+      --box-bg:#11151b;
+      --box-border:#2f353f;
+
+      --shadow:0 2px 6px rgba(0,0,0,.45);
+      --shadow-deep:0 2px 15px rgba(0,0,0,.55);
+    }
+
+    /* ====================================================================== */
+    /*  GLOBAL                                                                */
+    /* ====================================================================== */
+    body {
+      margin:0;
+      background:var(--bg);
+      color:var(--fg);
+      font:16px/1.6 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      padding:32px;
+      transition:background .25s ease,color .25s ease;
+    }
+
+    .container {
+      max-width:860px;
+      margin:0 auto;
+    }
+
+    h1,h2,h3 {
+      margin:0 0 16px;
+      font-weight:600;
+      line-height:1.28;
+    }
+
+    p, li {
+      color:var(--muted);
+    }
+
+    ul { padding-left:20px; }
+    li { margin-bottom:10px; }
+
+    /* ====================================================================== */
+    /*  CARD LOOK                                                             */
+    /* ====================================================================== */
+    .card {
+      background:var(--box-bg);
+      border:1px solid var(--box-border);
+      border-radius:var(--radius);
+      padding:32px;
+      margin-top:12px;
+      box-shadow:var(--shadow);
+    }
+
+    @media(max-width:540px){
+      body{padding:16px;}
+      .card{padding:22px;}
+    }
+
+    /* ====================================================================== */
+    /*  BUTTONS                                                               */
+    /* ====================================================================== */
+    .btn {
+      padding:11px 18px;
+      border-radius:10px;
+      border:1px solid var(--btn-border);
+      background:var(--btn-bg);
+      color:var(--btn-fg);
+      font-weight:600;
+      font-size:15px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      transition:0.18s ease;
+    }
+    .btn:hover { background:var(--chip-bg); }
+
+    .btn.primary {
+      background:var(--accent);
+      border-color:#1f6f1c;
+      color:var(--accent-ink);
+    }
+    .btn.primary:hover { filter:brightness(.94); }
+
+    /* ====================================================================== */
+    /*  STICKY CONTROL DOCK                                                    */
+    /* ====================================================================== */
+    .sticky-box {
+      position:fixed;
+      bottom:20px;
+      right:20px;
+      display:flex;
+      gap:12px;
+      z-index:999;
+    }
+
+    #themeBtn {
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      border:1px solid var(--btn-border);
+      background:var(--btn-bg);
+      color:var(--btn-fg);
+      font-size:19px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      transition:0.2s;
+      box-shadow:var(--shadow);
+    }
+    #themeBtn:hover { background:var(--chip-bg); }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="card">
+    <h1>Warum wurde diese Website blockiert?</h1>
+
+    <p>
+      Damit dein Gerät, deine Daten und dein Netzwerk sicher bleiben, werden Webseiten,
+      die als riskant eingestuft werden, automatisch blockiert. Dieser Mechanismus stammt
+      aus einem DNS-Filter-System wie <b>AdGuard Home</b>.
+    </p>
+
+    <h2>Typische Gründe für eine Blockierung</h2>
+    <ul>
+      <li><b>Malware / Schadsoftware</b> – Inhalte, die dein Gerät infizieren können.</li>
+      <li><b>Phishing & SCAM</b> – Versuche, Zugangsdaten oder private Informationen zu stehlen.</li>
+      <li><b>Kompromittierte Server</b> – Webseiten, die gehackt wurden und unbemerkt Schadcode verbreiten.</li>
+      <li><b>Gefährliche Weiterleitungen</b> – Domains führen auf fragwürdige Ziele.</li>
+      <li><b>Bekannte Bedrohungen</b> – gelistet auf Sicherheitsdatenbanken und Threat-Intelligence-Feeden.</li>
+    </ul>
+
+    <h2>Woher kommen die Informationen?</h2>
+    <p>AdGuard Home nutzt u. a.:</p>
+
+    <ul>
+      <li>DNS-Blocklisten (z. B. OISD, StevenBlack, ThreatFox, MalwareDomains)</li>
+      <li>Community-Reports & Sicherheitsforschungs-Datenbanken</li>
+      <li>Heuristiken gegen verdächtiges Verhalten</li>
+    </ul>
+
+    <h2>Kann das ein Fehler sein?</h2>
+    <p>
+      Ja – Fehlalarme können immer vorkommen.  
+      Wenn du sicher bist, dass die Seite harmlos ist, kann der Administrator eine individuelle Überprüfung durchführen.
+    </p>
+
+    <h2>Weiterführende Sicherheits-Informationen</h2>
+    <p>Offizielle Empfehlungen & Leitfäden:</p>
+
+    <ul>
+      <li><a href="https://www.bsi.bund.de" target="_blank">BSI – Bundesamt für Sicherheit in der Informationstechnik</a></li>
+      <li><a href="https://www.bsi.bund.de/DE/Themen/Verbraucherinnen-und-Verbraucher/cyber-sicher-unterwegs/cyber-sicher-unterwegs_node.html" target="_blank">BSI: Sicher unterwegs im Internet</a></li>
+      <li><a href="https://malpedia.caad.fkie.fraunhofer.de/" target="_blank">Fraunhofer FKIE – Malpedia</a></li>
+      <li><a href="https://www.kaspersky.de/resource-center/threats/malware" target="_blank">Grundlagen zu Malware-Arten</a></li>
+      <li><a href="https://haveibeenpwned.com/" target="_blank">Have I Been Pwned – Wurden meine Daten geleakt?</a></li>
+    </ul>
+
+    <h2>Was sollte ich tun?</h2>
+    <ul>
+      <li>Die Webseite <b>nicht erneut aufrufen</b>, wenn du dir unsicher bist.</li>
+      <li>Im Falle eines Verdachts das AdGuard Dashboard prüfen.</li>
+      <li>Den Administrator kontaktieren, falls ein Fehlalarm möglich ist.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="sticky-box">
+  <button id="themeBtn" aria-label="Theme wechseln">
+    <i class="fa-solid fa-circle-half-stroke"></i>
+  </button>
+
+  <a class="btn primary" href="/">
+    <i class="fa-solid fa-arrow-left"></i> Zurück
+  </a>
+</div>
+
+<script>
+const root = document.documentElement;
+const themeBtn = document.getElementById("themeBtn");
+const MODES = ["auto","light","dark"];
+
+function applyTheme(mode){
+  if(mode==="auto"){
+    root.removeAttribute("data-theme");
+    themeBtn.innerHTML = '<i class="fa-solid fa-circle-half-stroke"></i>';
+  }
+  if(mode==="light"){
+    root.setAttribute("data-theme","light");
+    themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+  }
+  if(mode==="dark"){
+    root.setAttribute("data-theme","dark");
+    themeBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+  }
+  localStorage.setItem("foxly-info-theme",mode);
+}
+
+applyTheme(localStorage.getItem("foxly-info-theme") || "auto");
+
+themeBtn.onclick = () => {
+  const cur = localStorage.getItem("foxly-info-theme") || "auto";
+  applyTheme(MODES[(MODES.indexOf(cur)+1)%MODES.length]);
+};
+</script>
+
+</body>
+</html>

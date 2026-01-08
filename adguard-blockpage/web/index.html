@@ -1,221 +1,373 @@
 <!doctype html>
-<html lang="de" data-theme="auto">
+<html lang="de">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <title>Seite blockiert</title>
+
+  <!-- FONT AWESOME (Solid only) -->
+  <link rel="stylesheet" href="/assets/fontawesome/css/fontawesome.min.css">
+  <link rel="stylesheet" href="/assets/fontawesome/css/solid.min.css">
+
   <style>
-    /* === Lightmode-Basisfarben ============================================ */
-    :root{
-      --accent:#39ac31; --accent-ink:#fff;
-      --fg:#111217; --bg:#fff; --muted:#5f6875;
-      --border:#d6d9df; --chip-bg:#f4f6f8; --chip-border:#e2e5ea;
-      --code-bg:rgba(16,24,40,.06); --btn-border:#c9cdd5;
-      --box-bg:#fafafa; --box-border:#b8bdc6;
-      --focus:#2563eb33; --shadow:0 2px 6px rgba(0,0,0,.08);
+
+    /* ====================================================================== */
+    /*  LIGHT MODE (Default)                                                   */
+    /* ====================================================================== */
+    :root {
+      --accent:#39ac31;
+      --accent-ink:#fff;
+
+      --fg:#111217;
+      --bg:#ffffff;
+
+      --muted:#5f6875;
+
+      --border:#d6d9df;
+      --border-soft:#e9ebef;
+
+      --chip-bg:#f4f6f8;
+      --chip-border:#e2e5ea;
+
+      --btn-bg:#f4f4f6;
+      --btn-border:#d5d8dd;
+      --btn-fg:#1c1f24;
+
+      --box-bg:#fafafa;
+      --box-border:#cfd3d9;
+
+      --focus:#2463eb33;
+      --shadow:0 2px 6px rgba(0,0,0,.08);
     }
 
-    /* === System-Darkmode ================================================== */
-    @media (prefers-color-scheme: dark){
-      :root{
-        --accent:#44c03a; --accent-ink:#071208;
-        --fg:#e8edf3; --bg:#0b0e12; --muted:#a2adbb;
-        --border:#2a3038; --chip-bg:#12161c; --chip-border:#2a3038;
-        --code-bg:rgba(255,255,255,.06); --btn-border:#3a414b;
-        --box-bg:#11151b; --box-border:#323843;
-        --focus:#60a5fa33; --shadow:0 2px 8px rgba(0,0,0,.35);
+    /* ====================================================================== */
+    /*  AUTO DARK MODE (System)                                                */
+    /* ====================================================================== */
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) {
+        --accent:#44c03a;
+        --accent-ink:#071208;
+
+        --fg:#e8edf3;
+        --bg:#0b0e12;
+
+        --muted:#a2adbb;
+
+        --border:#2b3138;
+        --border-soft:#323840;
+
+        --chip-bg:#12161c;
+        --chip-border:#2a3038;
+
+        --btn-bg:#191d23;
+        --btn-border:#2e333b;
+        --btn-fg:#e9eef5;
+
+        --box-bg:#11151b;
+        --box-border:#2f353f;
+
+        --focus:#60a5fa33;
+        --shadow:0 2px 8px rgba(0,0,0,.35);
+      }
+
+      :root:not([data-theme]) .four_zero_four_bg {
+        background-image:url(/img/blocked-dark.webp);
       }
     }
 
-    /* === Manuelle Overrides (Safari-safe) ================================= */
-    :root[data-theme="light"]{ color-scheme:light; }
-    :root[data-theme="dark"]{
-      color-scheme:dark;
-      --accent:#44c03a; --accent-ink:#071208;
-      --fg:#e8edf3; --bg:#0b0e12; --muted:#a2adbb;
-      --border:#2a3038; --chip-bg:#12161c; --chip-border:#2a3038;
-      --code-bg:rgba(255,255,255,.06); --btn-border:#3a414b;
-      --box-bg:#11151b; --box-border:#323843;
-      --focus:#60a5fa33; --shadow:0 2px 8px rgba(0,0,0,.35);
+    /* ====================================================================== */
+    /*  FORCED DARK MODE                                                       */
+    /* ====================================================================== */
+    :root[data-theme="dark"] {
+      --accent:#44c03a;
+      --accent-ink:#071208;
+
+      --fg:#e8edf3;
+      --bg:#0b0e12;
+
+      --muted:#a2adbb;
+
+      --border:#2b3138;
+      --border-soft:#323840;
+
+      --chip-bg:#12161c;
+      --chip-border:#2a3038;
+
+      --btn-bg:#191d23;
+      --btn-border:#2e333b;
+      --btn-fg:#e9eef5;
+
+      --box-bg:#11151b;
+      --box-border:#2f353f;
+
+      --focus:#60a5fa33;
+      --shadow:0 2px 8px rgba(0,0,0,.35);
     }
 
-    html,body{height:100%;margin:0}
-    body{
-      background:var(--bg);color:var(--fg);
-      font:16px/1.5 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    /* ====================================================================== */
+    /*  BASE                                                                   */
+    /* ====================================================================== */
+    html, body {
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      color:var(--fg);
+      font:16px/1.55 system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       -webkit-font-smoothing:antialiased;
       transition:background .25s ease,color .25s ease;
     }
 
-    .container{max-width:960px;margin:0 auto;padding:24px}
-    .text-center{text-align:center}
-    .page_404{padding:40px 0}
+    .container {
+      max-width:960px;
+      margin:0 auto;
+      padding:24px;
+    }
 
-    /* === Blocked Animation ================================================ */
-    .four_zero_four_bg{
+    .text-center { text-align:center; }
+
+    /* ====================================================================== */
+    /*  Illustration                                                          */
+    /* ====================================================================== */
+    .four_zero_four_bg {
       background-image:url(/img/blocked-light.webp);
-      height:320px;background-repeat:no-repeat;background-position:center;background-size:contain;
-      margin-bottom:10px;position:relative;
-    }
-    /* Auto Dark */
-    @media (prefers-color-scheme: dark){
-      .four_zero_four_bg{background-image:url(/img/blocked-dark.webp);}
-    }
-    /* Manueller Toggle */
-    :root[data-theme="dark"] .four_zero_four_bg{background-image:url(/img/blocked-dark.webp);}
-    :root[data-theme="light"] .four_zero_four_bg{background-image:url(/img/blocked-light.webp);}
-
-    .four_zero_four_bg h1{font-size:clamp(34px,8vw,80px);margin:0;text-shadow:var(--shadow)}
-
-    .contant_box_404{margin-top:-10px}
-    .h2{font-size:clamp(18px,3.5vw,26px);margin:0 0 8px}
-    p{margin:0 0 12px;color:var(--muted)}
-
-    /* === Buttons ========================================================== */
-    .btn,.link_404{
-      display:inline-block;padding:10px 16px;border-radius:12px;text-decoration:none;
-      margin:8px 6px 0;border:1px solid var(--btn-border);color:var(--fg);background:transparent;
-      transition:transform .05s ease,background .2s ease,border-color .2s ease;
-    }
-    .btn:active,.link_404:active{transform:translateY(1px)}
-    .btn:hover{background:var(--chip-bg)}
-    .btn.primary,.link_404{background:var(--accent);color:var(--accent-ink);border-color:#246d21}
-    .btn.primary:hover,.link_404:hover{filter:brightness(.96)}
-    .btn:focus-visible,.link_404:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
-
-    /* === Chips + Code ===================================================== */
-    .meta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:14px 0 0}
-    .chip{background:var(--chip-bg);border:1px solid var(--chip-border);
-      border-radius:999px;padding:6px 10px;color:var(--muted)}
-    code{background:var(--code-bg);padding:.1em .35em;border-radius:6px}
-
-    /* === IT-Joke-Box ====================================================== */
-    .joke-box{
-      margin-top:32px;padding:12px 18px;border:2px dashed var(--box-border);
-      border-radius:12px;background:var(--box-bg);max-width:580px;margin-left:auto;margin-right:auto;
-      text-align:center;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Courier New",monospace;
-      font-size:15px;color:var(--fg);box-shadow:var(--shadow);
-      transition:background .25s ease,border-color .25s ease;
-    }
-    .joke-box:hover{opacity:.98}
-    .joke{margin:0;opacity:1;transition:opacity .4s ease}
-
-    /* === Theme Toggle ===================================================== */
-    .theme-toggle{
-      position:absolute;right:18px;top:18px;display:flex;gap:6px;align-items:center;
-      font-size:13px;color:var(--muted);user-select:none;
-    }
-    .theme-toggle button{
-      border:1px solid var(--btn-border);background:var(--chip-bg);color:var(--fg);
-      border-radius:999px;padding:6px 10px;cursor:pointer;
-    }
-    .theme-toggle button[aria-pressed="true"]{
-      background:var(--accent);color:var(--accent-ink);border-color:#246d21;
+      height:320px;
+      background-repeat:no-repeat;
+      background-position:center;
+      background-size:contain;
+      margin-bottom:-40px;
+      position:relative;
     }
 
-    @media (max-width:480px){
-      .container{padding:16px}
-      .theme-toggle{right:12px;top:12px}
+    :root[data-theme="dark"] .four_zero_four_bg {
+      background-image:url(/img/blocked-dark.webp);
     }
+
+    .four_zero_four_bg h1 {
+      font-size:clamp(32px,8vw,80px);
+      margin:0;
+      text-shadow:var(--shadow);
+    }
+
+    /* ====================================================================== */
+    /*  THEME BUTTON                                                          */
+    /* ====================================================================== */
+    .theme-toggle {
+      position:absolute;
+      top:16px;
+      right:16px;
+    }
+
+    #themeBtn {
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      border:1px solid var(--btn-border);
+      background:var(--btn-bg);
+      color:var(--btn-fg);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:19px;
+      cursor:pointer;
+      transition:0.2s ease;
+    }
+
+    #themeBtn:hover {
+      background:var(--border-soft);
+    }
+
+    /* ====================================================================== */
+    /*  BUTTONS                                                               */
+    /* ====================================================================== */
+    .btn {
+      padding:11px 20px;
+      border-radius:10px;
+      font-weight:600;
+      font-size:15px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      border:1px solid var(--btn-border);
+      background:var(--btn-bg);
+      color:var(--btn-fg);
+      text-decoration:none;
+      transition:0.18s ease;
+    }
+
+    .btn:hover {
+      background:var(--border-soft);
+    }
+
+    .btn.primary {
+      background:var(--accent);
+      border-color:#20791c;
+      color:var(--accent-ink);
+    }
+
+    .btn.primary:hover {
+      filter:brightness(.94);
+    }
+
+    /* ====================================================================== */
+    /*  SECURITY CARD                                                         */
+    /* ====================================================================== */
+    .security-card {
+      background:var(--box-bg);
+      border:1px solid var(--box-border);
+      border-radius:16px;
+      padding:26px 30px;
+      margin:26px auto 24px;
+      max-width:760px;
+      text-align:left;
+      box-shadow:var(--shadow);
+    }
+
+    .security-title {
+      font-size:20px;
+      margin:0 0 16px;
+      font-weight:600;
+    }
+
+    .security-list {
+      list-style:none;
+      padding:0;
+      margin:0;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px 18px;
+    }
+
+    @media(max-width:640px){
+      .security-list { grid-template-columns:1fr; }
+    }
+
+    .security-list li {
+      display:flex;
+      gap:10px;
+      color:var(--muted);
+    }
+
+    .security-list svg {
+      width:20px;
+      height:20px;
+      stroke:var(--accent);
+      stroke-width:2.3;
+      fill:none;
+      margin-top:2px;
+      flex-shrink:0;
+    }
+
+    /* ====================================================================== */
+    /*  META BOX                                                              */
+    /* ====================================================================== */
+    .meta-box {
+      margin-top:20px;
+      padding:14px 18px;
+      border-radius:12px;
+      background:var(--chip-bg);
+      border:1px solid var(--chip-border);
+      display:flex;
+      gap:16px;
+      justify-content:space-between;
+      color:var(--muted);
+      font-size:15px;
+      flex-wrap:wrap;
+    }
+
+    .meta-item strong {
+      color:var(--fg);
+      font-weight:600;
+    }
+
   </style>
 </head>
+
 <body>
+
 <section class="page_404">
   <div class="container">
     <div class="text-center">
+
       <div class="four_zero_four_bg">
         <h1>Blocked!</h1>
 
-        <!-- Theme Toggle -->
-        <div class="theme-toggle" role="group" aria-label="Theme wählen">
-          <button id="tAuto"  type="button" aria-pressed="true"  title="System">Auto</button>
-          <button id="tLight" type="button" aria-pressed="false" title="Hell">Hell</button>
-          <button id="tDark"  type="button" aria-pressed="false" title="Dunkel">Dunkel</button>
+        <div class="theme-toggle">
+          <button id="themeBtn" aria-label="Theme umschalten">
+            <i class="fa-solid fa-circle-half-stroke"></i>
+          </button>
         </div>
       </div>
 
-      <div class="contant_box_404">
-        <h3 class="h2">Diese Seite wurde blockiert</h3>
-        <p>AdGuard Home hat diese Domain gesperrt. Falls das ein Irrtum ist, melde dich bei <b>Foxly</b>.</p>
+      <h3>Zugriff verweigert – Diese Website ist gesperrt.</h3>
 
-        <div class="meta" aria-label="Details">
-          <span class="chip">Domain: <code id="host">–</code></span>
-          <span class="chip">Zeit: <code id="ts">–</code></span>
-          <span class="chip">Client-IP: <code id="cip">n/v</code></span>
-        </div>
+      <p>Unser Sicherheitssystem hat diese Seite blockiert, weil sie als <b>potenziell gefährlich</b> eingestuft wurde.</p>
 
-        <!-- Witz-Sektion -->
-        <div id="joke-box" class="joke-box" aria-live="polite">
-          <p id="joke" class="joke"></p>
-        </div>
-<br>
-        <div>
-          <a class="link_404" href="https://blocked.homelab.foxly.de">Mehr Infos</a>
-          <a class="btn" href="https://adguard.homelab.foxly.de" rel="nofollow">AdGuard Dashboard</a>
-          <a class="btn" href="#" onclick="location.reload()">Erneut prüfen</a>
+      <div class="security-card">
+        <h3 class="security-title">Warum wurde diese Website blockiert?</h3>
+
+        <ul class="security-list">
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5l9-9"/></svg> Malware oder Schadsoftware</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5l9-9"/></svg> Betrugsversuche (SCAM / Phishing)</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5l9-9"/></svg> kompromittierte Inhalte</li>
+          <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5l9-9"/></svg> gefährliche Weiterleitungen</li>
+        </ul>
+
+        <div class="meta-box">
+          <div class="meta-item"><strong>Domain:</strong> <span id="m_host">–</span></div>
+          <div class="meta-item"><strong>Zeit:</strong> <span id="m_ts">–</span></div>
+          <div class="meta-item"><strong>Client-IP:</strong> <span id="m_cip">–</span></div>
         </div>
       </div>
+
+      <div>
+        <a class="btn primary" href="/info/"><i class="fa-solid fa-circle-info"></i> Mehr Infos</a>
+        <a class="btn" href="https://adguard.homelab.foxly.de"><i class="fa-solid fa-gauge"></i> AdGuard</a>
+        <a class="btn" href="#" onclick="location.reload()"><i class="fa-solid fa-rotate-right"></i> Erneut prüfen</a>
+      </div>
+
     </div>
   </div>
 </section>
 
 <script>
-  // Meta
-  const $ = id => document.getElementById(id);
-  $('host').textContent = location.host || location.hostname || 'unbekannt';
-  $('ts').textContent = new Date().toLocaleString();
-  fetch('/clientip.txt', {cache:'no-store'})
-    .then(r => r.ok ? r.text() : Promise.reject())
-    .then(t => $('cip').textContent = (t||'').trim() || 'n/v')
-    .catch(()=>{});
+document.getElementById("m_host").textContent = location.host;
+document.getElementById("m_ts").textContent = new Date().toLocaleString();
 
-  // Jokes
-  const jokes = [
-    "Es gibt 10 Arten von Menschen: die, die Binär verstehen, und die anderen.",
-    "Mein Code läuft nicht. – Warum? – Keine Ahnung, gestern hat er noch gerannt.",
-    "„Bei mir geht’s!“ – Berühmte letzte Worte jedes Entwicklers.",
-    "Hardware ist das, worauf man treten kann, wenn die Software nervt.",
-    "Ein SQL kam in eine Bar, fragte nach zwei Tabellen und sagte: „Join me.“",
-    "„It works on my machine.“ – „Dann nimm deine Maschine mit in Produktion.“",
-    "Ein Programmierer stirbt. Auf dem Grabstein steht: R.I.P.; return 0;",
-    "Wie viele Programmierer braucht man, um eine Glühbirne zu wechseln? – Keine, ist ein Hardwareproblem.",
-    "Nie mit 0 teilen. Außer durch Freizeit.",
-    "„Nur noch schnell in Produktion hotfixen…“ – berühmte Horror-Story.",
-    "Ich habe keine Bugs – das sind unvorhergesehene Features.",
-    "Cache invalidation ist schwer. Das und die richtigen Namen.",
-    "„Kannst du das schnell machen?“ – „Ja. Aber dann ist es auch schnell kaputt.“",
-    "Regex ist wie Zauberei. Macht Eindruck – bis man selbst dran ist.",
-    "„Warum ist es langsam?“ – „Hast du’s mal neu gestartet?“",
-    "IPv6? Klar, das kommt gleich nach der Doku.",
-    "Cloud ist nur der Computer eines anderen. Mit deiner Kreditkarte.",
-    "Backup ist gut. Restore ist besser.",
-    "„Wir refactoren später.“ – Niemand, jemals, ehrlich gemeint.",
-    "Kein Internet? Dann ist das WLAN-Kabel wohl rausgerutscht."
-  ];
-  const el = $('joke'); const seen = new Set();
-  function nextJoke(){
-    if (seen.size === jokes.length) seen.clear();
-    let i; do { i = Math.floor(Math.random()*jokes.length); } while (seen.has(i));
-    seen.add(i); el.style.opacity=0; setTimeout(()=>{ el.textContent=jokes[i]; el.style.opacity=1; },200);
-  }
-  nextJoke(); setInterval(nextJoke, 20000);
+fetch("/clientip.txt",{cache:"no-store"})
+  .then(r=>r.ok?r.text():"n/v")
+  .then(ip=>document.getElementById("m_cip").textContent=(ip.trim()||"n/v"))
+  .catch(()=>document.getElementById("m_cip").textContent="n/v");
 
-  // Theme
-  const root=document.documentElement;
-  const buttons={auto:$('tAuto'),light:$('tLight'),dark:$('tDark')};
-  function applyTheme(mode){
-    root.setAttribute('data-theme',mode);
-    for(const k in buttons){buttons[k].setAttribute('aria-pressed',String(k===mode));}
-    try{localStorage.setItem('blockpage-theme',mode);}catch(e){}
+const root = document.documentElement;
+const themeBtn = document.getElementById("themeBtn");
+const MODES = ["auto","light","dark"];
+
+function applyTheme(mode){
+  if(mode==="auto"){
+    root.removeAttribute("data-theme");
+    themeBtn.innerHTML = '<i class="fa-solid fa-circle-half-stroke"></i>';
   }
-  (function initTheme(){
-    let saved=null;try{saved=localStorage.getItem('blockpage-theme');}catch(e){}
-    applyTheme((saved==='light'||saved==='dark')?saved:'auto');
-  })();
-  buttons.auto.addEventListener('click',()=>applyTheme('auto'));
-  buttons.light.addEventListener('click',()=>applyTheme('light'));
-  buttons.dark.addEventListener('click',()=>applyTheme('dark'));
+  if(mode==="light"){
+    root.setAttribute("data-theme","light");
+    themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+  }
+  if(mode==="dark"){
+    root.setAttribute("data-theme","dark");
+    themeBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+  }
+  localStorage.setItem("foxly-blockpage-theme",mode);
+}
+
+applyTheme(localStorage.getItem("foxly-blockpage-theme") || "auto");
+
+themeBtn.onclick = () => {
+  const cur = localStorage.getItem("foxly-blockpage-theme") || "auto";
+  applyTheme(MODES[(MODES.indexOf(cur)+1)%MODES.length]);
+};
 </script>
+
 </body>
 </html>
